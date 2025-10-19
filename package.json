@@ -1,0 +1,16 @@
+{
+  "name": "parrilla-fit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n CLIENT,SERVER -c cyan,magenta \"npm:dev:client\" \"npm:dev:server\"",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "node server/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
