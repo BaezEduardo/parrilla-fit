@@ -37,7 +37,6 @@ export default function App() {
         {menu.sections.map((s, i) => (
           <Section key={i} name={s.name} items={s.items} />
         ))}
-        <p className="helper">¿Necesitas ayuda para elegir? Chatea con nuestro asistente.</p>
       </main>
     </>
   );
