@@ -1,21 +1,29 @@
 import express from "express";
+import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs";
-import "dotenv/config";
 import authRoutes from "./routes/auth.js";
 import prefRoutes from "./routes/preferences.js";
+import Airtable from "airtable";
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+const base = new Airtable({
+  apiKey: process.env.AIRTABLE_API_KEY,
+}).base(process.env.AIRTABLE_BASE_ID);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const app = express();
-const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/preferences", prefRoutes);
 
+app.get("/health", (_, res) => res.send("ok"));
 app.get("/api/menu", (_req, res) => {
   try {
     const filePath = path.join(__dirname, "data", "menu.json");
@@ -24,6 +32,15 @@ app.get("/api/menu", (_req, res) => {
   } catch (err) {
     console.error("Error leyendo menu.json:", err);
     res.status(500).json({ error: "No se pudo leer el menú" });
+  }
+});
+app.get("/data", async (req, res) => {
+  try {
+    const records = await base("Clientes").select({}).all();
+    const data = records.map(r => r.fields);
+    res.json(data);
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
 
@@ -37,5 +54,5 @@ app.post("/api/chat", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`API corriendo en http://localhost:${PORT}`);
+  console.log(`API running on port ${PORT}`);
 });
