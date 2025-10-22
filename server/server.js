@@ -22,8 +22,8 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/preferences", prefRoutes);
-
-app.get("/health", (_, res) => res.send("ok"));
+app.get("/health", (_req, res) => res.send("ok"));
+app.get("/", (_req, res) => res.send("API Parrilla Fit funcionando ✅"));
 app.get("/api/menu", (_req, res) => {
   try {
     const filePath = path.join(__dirname, "data", "menu.json");
