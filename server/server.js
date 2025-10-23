@@ -23,6 +23,15 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/preferences", prefRoutes);
 app.get("/health", (_req, res) => res.send("ok"));
+app.get("/__ver", (_req, res) => {
+  res.json({
+    msg: "backend vivo",
+    file: import.meta.url,
+    cwd: process.cwd(),
+    time: new Date().toISOString()
+  });
+});
+
 app.get("/", (_req, res) => res.send("API Parrilla Fit funcionando ✅"));
 app.get("/api/menu", (_req, res) => {
   try {
