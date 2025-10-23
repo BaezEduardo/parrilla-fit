@@ -6,8 +6,14 @@ import fs from "node:fs";
 import authRoutes from "./routes/auth.js";
 import prefRoutes from "./routes/preferences.js";
 import Airtable from "airtable";
+import cors from "cors";
 
 dotenv.config();
+
+const allowed = (process.env.CORS_ORIGIN || "")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +28,15 @@ const __dirname = path.dirname(__filename);
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/preferences", prefRoutes);
+
+app.use(cors({
+  origin: (origin, cb) => {
+    // permite llamadas desde orígenes permitidos o sin origin (curl/postman)
+    if (!origin || allowed.includes(origin)) return cb(null, true);
+    return cb(null, false);
+  },
+  credentials: true,
+}));
 app.get("/health", (_req, res) => res.send("ok"));
 app.get("/__ver", (_req, res) => {
   res.json({
